@@ -38,7 +38,8 @@ class LocalConstants:
     supports_children_type_names = list_type_names + dict_type_names
     none_type_name = str(type(None).__name__)
 
-    header_names = ("Key", "Value", "Type")
+    # header_names = ("Key", "Value", "Type")
+    header_names = ("键", "值", "类型")
 
 
 lk = LocalConstants

@@ -44,6 +44,8 @@ class JsonEditorWidget(QtWidgets.QWidget):
 
         self.active_json_indent_level = None
         self.last_font_change_time = 1
+        
+        self.layout_www = QtWidgets.QHBoxLayout()
 
         self.path_widget = ui_utils.QtPathWidget(
             settings_name="JsonEditor",
@@ -52,8 +54,14 @@ class JsonEditorWidget(QtWidgets.QWidget):
             only_show_existing_recent_paths=True,
         )
 
+        self.save_button = QtWidgets.QPushButton("保存")
+        self.save_button.clicked.connect(self.save_json)
+        self.save_button.setMaximumWidth(50)
+        self.layout_www.addWidget(self.path_widget)
+        self.layout_www.addWidget(self.save_button)
+
         self.filter_widget = QtWidgets.QLineEdit()
-        self.filter_widget.setPlaceholderText("filter")
+        self.filter_widget.setPlaceholderText("筛选")
         self.filter_widget.setClearButtonEnabled(True)
         self.filter_widget.textEdited.connect(self.filter_data)
 
@@ -68,12 +76,12 @@ class JsonEditorWidget(QtWidgets.QWidget):
 
         ###########################################################
         # JSON editor specific ui
-        self.modify_hierarchy = QtWidgets.QCheckBox("Modify Hierarchy")
+        self.modify_hierarchy = QtWidgets.QCheckBox("修改层次结构")
         self.modify_hierarchy.setChecked(False)
         self.modify_type_chooser = QtWidgets.QComboBox()
         self.modify_type_chooser.addItems(lk.batch_modify_options)
-        self.modify_rename_button = QtWidgets.QPushButton("Rename")
-        self.modify_duplicate_button = QtWidgets.QPushButton("Duplicate")
+        self.modify_rename_button = QtWidgets.QPushButton("重命名")
+        self.modify_duplicate_button = QtWidgets.QPushButton("重复")
 
         # connect signals
         self.modify_rename_button.clicked.connect(self.modify_rename)
@@ -87,7 +95,7 @@ class JsonEditorWidget(QtWidgets.QWidget):
         modify_layout.addWidget(self.modify_duplicate_button)
         ###########################################################
 
-        self.main_layout.addWidget(self.path_widget)
+        self.main_layout.addLayout(self.layout_www)
         self.main_layout.addWidget(self.filter_widget)
         self.main_layout.addWidget(self.data_tree_widget)
         self.main_layout.addWidget(self.batch_modify_widget)
@@ -187,10 +195,10 @@ class JsonEditorWidget(QtWidgets.QWidget):
 
         self.active_json_indent_level = system.get_json_indent_level(path)
         if self.active_json_indent_level is not None:
-            print("found indentation in file, setting to: {}".format(self.active_json_indent_level))
+            print("在文件中找到缩进，设置为： {}".format(self.active_json_indent_level))
 
         self.data_tree_widget.set_data(json_data)
-        print("Loaded Json from: {}".format(path))
+        print("从以下位置加载 Json：{}".format(path))
 
     def new_file(self):
         self.path_widget.set_path("")
@@ -200,11 +208,11 @@ class JsonEditorWidget(QtWidgets.QWidget):
     def save_json(self, path=None):
         data_from_ui = self.data_tree_widget.get_data()
         if data_from_ui == "":
-            print("No data found in UI, please define a root type before saving")
+            print("在UI中没有找到数据，请在保存前定义根类型")
             return
 
         ui_path = self.path_widget.path()
-        if path is None:
+        if path is None or type(path) is not str:
             if ui_path:
                 path = ui_path
             else:
@@ -260,7 +268,7 @@ class JsonEditorWidget(QtWidgets.QWidget):
                 json_data = json.loads(text, object_pairs_hook=collections.OrderedDict)
                 self.data_tree_widget.set_data(json_data)
             except Exception as e:
-                self.status_message("No JSON serializable data could be read from string")
+                self.status_message("无法从字符串中读取 JSON 可序列化数据")
 
     ###############################################################################
     # Font Size
@@ -290,9 +298,9 @@ class HelperMessageOverlay(QtWidgets.QWidget):
         palette.setColor(palette.Background, QtCore.Qt.transparent)
 
         self.font_size = 13
-        self.empty_json_message = "Drag and drop a JSON file, \n" \
-                                  "or drag in JSON readable data, \n" \
-                                  "or paste data from clipboard."
+        self.empty_json_message = "拖放 JSON 文件， \n" \
+                                  "或拖入 JSON 可读数据， \n" \
+                                  "或粘贴剪贴板中的数据。"
 
         self.setPalette(palette)
 
@@ -311,89 +319,89 @@ class JsonEditorWindow(ui_utils.ToolWindow):
         super(JsonEditorWindow, self).__init__()
         self.ui = JsonEditorWidget()
         self.setCentralWidget(self.ui)
-        self.setWindowTitle("JSON Editor")
+        self.setWindowTitle("JSON 编辑器")
 
         menu_bar = QtWidgets.QMenuBar()
-        file_menu = menu_bar.addMenu("File")
+        file_menu = menu_bar.addMenu("文件")
         file_menu.setTearOffEnabled(True)
-        file_menu.addAction("New", self.ui.new_file, QtGui.QKeySequence("Ctrl+N"))
-        file_menu.addAction("Open", self.ui.path_widget.open_dialog_and_set_path, QtGui.QKeySequence("Ctrl+O"))
-        file_menu.addAction("Save", self.ui.save_json, QtGui.QKeySequence("Ctrl+S"))
-        file_menu.addAction("Save As...", self.ui.save_json_as, QtGui.QKeySequence("Ctrl+Shift+S"))
+        file_menu.addAction("新建", self.ui.new_file, QtGui.QKeySequence("Ctrl+N"))
+        file_menu.addAction("打开", self.ui.path_widget.open_dialog_and_set_path, QtGui.QKeySequence("Ctrl+O"))
+        file_menu.addAction("保存", self.ui.save_json, QtGui.QKeySequence("Ctrl+S"))
+        file_menu.addAction("另存为...", self.ui.save_json_as, QtGui.QKeySequence("Ctrl+Shift+S"))
         file_menu.addSeparator()
-        file_menu.addAction("Reload from Disk", self.ui.reload, QtGui.QKeySequence("F5"))
+        file_menu.addAction("从磁盘重新加载", self.ui.reload, QtGui.QKeySequence("F5"))
 
-        edit_menu = menu_bar.addMenu("Edit")
+        edit_menu = menu_bar.addMenu("编辑")
         edit_menu.setTearOffEnabled(True)
         edit_menu.addAction(
-            "Cut",
+            "剪切",
             self.ui.data_tree_widget.action_cut_data_to_clipboard,
             QtGui.QKeySequence("Ctrl+X"),
         )
 
         edit_menu.addAction(
-            "Copy",
+            "复制",
             self.ui.data_tree_widget.action_copy_data_to_clipboard,
             QtGui.QKeySequence("Ctrl+C"),
         )
 
         edit_menu.addAction(
-            "Paste",
+            "粘贴",
             self.ui.data_tree_widget.action_paste_data_from_clipboard,
             QtGui.QKeySequence("Ctrl+V"),
         )
 
         edit_menu.addAction(
-            "Duplicate",
+            "重复",
             self.ui.data_tree_widget.action_duplicate_selected_items,
             QtGui.QKeySequence("Ctrl+D"),
         )
 
         edit_menu.addAction(
-            "Delete",
+            "删除",
             self.ui.data_tree_widget.delete_selected_items,
             QtGui.QKeySequence("DEL"),
         )
 
         edit_menu.addSeparator()
         edit_menu.addAction(
-            "Move Up",
+            "上升",
             self.ui.data_tree_widget.action_move_selected_items_up,
             QtGui.QKeySequence("Alt+Up"),
         )
 
         edit_menu.addAction(
-            "Move Down",
+            "下移",
             self.ui.data_tree_widget.action_move_selected_items_down,
             QtGui.QKeySequence("Alt+Down"),
         )
 
         edit_menu.addAction(
-            "Sort Alphabetical",
+            "按字母顺序排序",
             self.ui.data_tree_widget.sort_selected_items,
         )
 
         edit_menu.addAction(
-            "Select Hierarchy",
+            "选择层次结构",
             self.ui.data_tree_widget.select_hierarchy,
             QtGui.QKeySequence("Ctrl+Down"),
         )
 
-        display_menu = menu_bar.addMenu("Display")
+        display_menu = menu_bar.addMenu("显示")
         display_menu.setTearOffEnabled(True)
         display_menu.addAction(
-            "Reset Font Size",
+            "重置字体大小",
             self.ui.set_tree_font_size,
         )
 
         display_menu.addAction(
-            "Increase Font Size",
+            "增加字体大小",
             (lambda: self.ui.increment_tree_font_size(1)),
             QtGui.QKeySequence("Ctrl++"),
         )
 
         display_menu.addAction(
-            "Decrease Font Size",
+            "减小字体大小",
             (lambda: self.ui.increment_tree_font_size(-1)),
             QtGui.QKeySequence("Ctrl+-"),
         )

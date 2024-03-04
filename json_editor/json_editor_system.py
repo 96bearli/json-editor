@@ -40,5 +40,5 @@ def get_json_indent_level(json_path):
 
 
 def save_json(json_data, json_path, indent=2):
-    with open(json_path, "w+", encoding="utf8") as fp:
-        json.dump(json_data, fp, indent=indent)
+    with open(json_path, "w", encoding="utf8") as fp:
+        json.dump(json_data, fp, ensure_ascii=False, indent=indent)

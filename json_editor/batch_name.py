@@ -13,10 +13,10 @@ class BatchNameWidget(QtWidgets.QWidget):
         self.main_layout.setContentsMargins(0, 0, 0, 0)
 
         self.prefix_line_edit = QtWidgets.QLineEdit()
-        self.prefix_line_edit.setPlaceholderText("Prefix")
+        self.prefix_line_edit.setPlaceholderText("前缀")
         self.prefix_line_edit.setClearButtonEnabled(True)
         self.suffix_line_edit = QtWidgets.QLineEdit()
-        self.suffix_line_edit.setPlaceholderText("Suffix")
+        self.suffix_line_edit.setPlaceholderText("后缀")
         self.suffix_line_edit.setClearButtonEnabled(True)
 
         self.add_search_replace_button = QtWidgets.QPushButton("+")
