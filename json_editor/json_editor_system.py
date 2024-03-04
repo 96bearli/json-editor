@@ -19,19 +19,19 @@ def load_json(json_path):
     if not os.path.exists(json_path):
         return
 
-    with open(json_path, "r") as fp:
+    with open(json_path, "r", encoding="utf8") as fp:
         json_data = json.load(fp, object_pairs_hook=collections.OrderedDict)
     return json_data
 
 
 def get_json_indent_level(json_path):
-    with open(json_path, "r") as fp:
+    with open(json_path, "r", encoding="utf8") as fp:
         first_couple_of_characters = fp.readline(8)
 
     if len(first_couple_of_characters) > 2:
         return None
 
-    with open(json_path, "r") as fp:
+    with open(json_path, "r", encoding="utf8") as fp:
         fp.readline()  # read first line so we can get to the second one
 
         next_line = fp.readline()
@@ -40,5 +40,5 @@ def get_json_indent_level(json_path):
 
 
 def save_json(json_data, json_path, indent=2):
-    with open(json_path, "w+") as fp:
+    with open(json_path, "w+", encoding="utf8") as fp:
         json.dump(json_data, fp, indent=indent)
