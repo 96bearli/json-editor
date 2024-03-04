@@ -6,11 +6,11 @@ import sys
 active_dcc_is_maya = "maya" in os.path.basename(sys.executable)
 
 if active_dcc_is_maya:
-    from . import json_editor_dcc_maya as dcc_module
+    import json_editor_dcc_maya as dcc_module
 
     dcc = dcc_module.JsonEditorMaya()
 else:
-    from . import json_editor_dcc_core as dcc_module
+    import json_editor_dcc_core as dcc_module
 
     dcc = dcc_module.JsonEditorCoreInterface()
 

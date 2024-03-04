@@ -1,6 +1,6 @@
 from functools import partial
 
-from .ui_utils import QtWidgets
+from ui_utils import QtWidgets
 
 
 class BatchNameWidget(QtWidgets.QWidget):

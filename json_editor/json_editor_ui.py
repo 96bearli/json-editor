@@ -3,16 +3,16 @@ import json
 import sys
 import time
 
-from . import batch_name
-from . import data_tree
-from . import json_editor_system as system
-from . import ui_utils
-from .ui_utils import QtCore, QtWidgets, QtGui
+import batch_name
+import data_tree
+import json_editor_system as system
+import ui_utils
+from ui_utils import QtCore, QtWidgets, QtGui
 
 standalone_app = None
 if not QtWidgets.QApplication.instance():
     standalone_app = QtWidgets.QApplication(sys.argv)
-    from .resources import stylesheets
+    from resources import stylesheets
 
     stylesheets.apply_standalone_stylesheet()
 
