@@ -3,6 +3,9 @@ import json
 import sys
 import time
 
+import qdarkstyle
+from qdarkstyle import LightPalette
+
 import batch_name
 import data_tree
 import json_editor_system as system
@@ -13,8 +16,12 @@ standalone_app = None
 if not QtWidgets.QApplication.instance():
     standalone_app = QtWidgets.QApplication(sys.argv)
     from resources import stylesheets
-
-    stylesheets.apply_standalone_stylesheet()
+    
+    light_stylesheet = qdarkstyle.load_stylesheet(qt_api='pyside2')
+    # light_stylesheet = qdarkstyle.load_stylesheet(qt_api='pyside2', palette=LightPalette)
+    standalone_app.setStyleSheet(light_stylesheet)
+    # 
+    # stylesheets.apply_standalone_stylesheet()
 
 
 class LocalConstants:
